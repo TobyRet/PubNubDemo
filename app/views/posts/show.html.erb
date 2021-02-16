@@ -1,0 +1,65 @@
+<p id="notice"><%= notice %></p>
+
+
+<p>
+  <strong>Title:</strong>
+  <%= @post.title %>
+</p>
+
+<p>
+  <strong>Body:</strong>
+  <%= @post.body %>
+</p>
+
+
+
+<%= link_to 'Edit', edit_post_path(@post) %> |
+<%= link_to 'Back', posts_path %>
+
+<h2>Comments</h2>
+<div id="comments"></div>
+
+<script>
+    $(document).ready(function(){
+        console.log("REady");
+
+        var $pubnub = new PubNub({
+            publishKey : "PUBKEY",
+            subscribeKey :  "SUBKEY"
+        })
+
+        var article_id = "comments-" + window.location.pathname.split("/")[2];
+        console.log(article_id);
+        $pubnub.subscribe({
+            channels: [article_id]
+        });
+        $pubnub.addListener({
+            message: function(message) {
+                console.log(message);
+                console.log(message.message["comment"]);
+                $("#comments").append("<div class=\"comment\"><p>" + message.message["comment"] + "</p></div>")
+            }
+        })
+        $("#new_comment").bind("ajax:complete", function(event,xhr,status){
+            $('#comment_content').val('');
+        });
+        $('.actions input').keypress(function (e) {
+            if (e.which == 13) {
+                $('form#new_comment').submit();
+                return false;
+            }
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
