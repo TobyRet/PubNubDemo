@@ -28,10 +28,14 @@ class CommentsController < ApplicationController
         channel: "comments-" + "#{@commentable.id}",
         message: { comment: comment_params["body"] }
       )
-      respond_to do |format|
-        format.js { render :nothing => true }
-        format.html
-      end
+      # Below is required when form is added to the Post page. Form needs to be submitted with JS
+      # respond_to do |format|
+      #   format.js { render :nothing => true }
+      #   format.html
+      # end
+
+      # Currently we are just redirectiing to comments#index
+      redirect_to comments_path, notice: "Comment was successfully created."
     else
       render :new
     end
